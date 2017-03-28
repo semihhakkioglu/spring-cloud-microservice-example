@@ -1,54 +1,56 @@
-rabbitmq:
-  image: rabbitmq:3-management
-  ports:
-    - "5672:5672"
+version: "3"
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
 
-service-discovery:
-  image: shakkioglu/service-discovery
-  hostname: service-discovery
-  ports:
-    - "8761:8761"
+  service-discovery:
+    image: shakkioglu/service-discovery
+    hostname: service-discovery
+    ports:
+      - "8761:8761"
 
-config-server: 
-  image: shakkioglu/config-server
-  hostname: config-server
-  ports:
-    - "8888:8888"
-  links:
-    - "service-discovery"
-    - "rabbitmq"
+  config-server: 
+    image: shakkioglu/config-server
+    hostname: config-server
+    ports:
+      - "8888:8888"
+    links:
+      - "service-discovery"
+      - "rabbitmq"
 
-gateway-api: 
-  image: shakkioglu/gateway-api
-  ports:
-    - "8080:8080"
-  links:
-    - config-server
-    - service-discovery
-    - merchant-service
-    - invoice-service
-    - rabbitmq
+  gateway-api: 
+    image: shakkioglu/gateway-api
+    ports:
+      - "8080:8080"
+    links:
+      - config-server
+      - service-discovery
+      - merchant-service
+      - invoice-service
+      - rabbitmq
 
-merchant-service:
-  image: shakkioglu/merchant-service
-  links:
-    - config-server
-    - service-discovery
-    - rabbitmq
+  merchant-service:
+    image: shakkioglu/merchant-service
+    links:
+      - config-server
+      - service-discovery
+      - rabbitmq
 
-invoice-service:
-  image: shakkioglu/invoice-service
-  links:
-    - config-server
-    - service-discovery
-    - hystrix-dashboard
-    - merchant-service
-    - rabbitmq
+  invoice-service:
+    image: shakkioglu/invoice-service
+    links:
+      - config-server
+      - service-discovery
+      - merchant-service
+      - rabbitmq
 
-hystrix-dashboard:
-  image:  shakkioglu/hystrix-dashboard
-  hostname: hystrix-dashboard
-  ports:
-    - "8010:8010"
-  links:
-    - "service-discovery"
+  hystrix-dashboard:
+    image:  shakkioglu/hystrix-dashboard
+    hostname: hystrix-dashboard
+    ports:
+      - "8010:8010"
+    links:
+      - service-discovery
+      - gateway-api
