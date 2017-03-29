@@ -14,8 +14,6 @@ services:
   config-server: 
     image: shakkioglu/config-server
     hostname: config-server
-    ports:
-      - "8888:8888"
     links:
       - "service-discovery"
       - "rabbitmq"
